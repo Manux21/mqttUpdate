@@ -2,13 +2,13 @@
 #include <WiFi.h>
 #include "OtaCicd.h"
 
-const char *ssid = "Redmi_FFAC";
-const char *password = "Fdlk912a";
+const char *ssid = "ArtemEgorov";
+const char *password = "1123456789";
 const char *mqtt_uri = "7659f00ebd944dcfa820cb814fbc6a53.s1.eu.hivemq.cloud:8883";
 const char *mqtt_user = "esp32";
 const char *mqtt_password = "Password1234";
 const char *mqtt_client_id = "esp32";
-const char *releaseTopic = "test1";
+const char *releaseTopic = "esp-version";
 
 const char *mqtt_cert_pem = "-----BEGIN CERTIFICATE-----\n"
                             "MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw\n"
@@ -101,5 +101,6 @@ void setup()
 
 void loop()
 {
-
+  Serial.println("2");
+  delay(500);
 }
