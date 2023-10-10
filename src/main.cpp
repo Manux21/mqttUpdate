@@ -101,6 +101,6 @@ void setup()
 
 void loop()
 {
-  Serial.print("|");
+  Serial.print("a");
   delay(500);
 }
