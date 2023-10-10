@@ -4,7 +4,7 @@
 
 const char *ssid = "ArtemEgorov";
 const char *password = "1123456789";
-const char *mqtt_uri = "7659f00ebd944dcfa820cb814fbc6a53.s1.eu.hivemq.cloud:8883";
+const char *mqtt_uri = "mqtts://7659f00ebd944dcfa820cb814fbc6a53.s1.eu.hivemq.cloud:8883";
 const char *mqtt_user = "esp32";
 const char *mqtt_password = "Password1234";
 const char *mqtt_client_id = "esp32";
@@ -76,7 +76,7 @@ const String s3CertPem = "-----BEGIN CERTIFICATE-----\n"
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println();
 
   WiFi.begin(ssid, password);
@@ -101,6 +101,6 @@ void setup()
 
 void loop()
 {
-  Serial.println("6");
+  Serial.print("|");
   delay(500);
 }
