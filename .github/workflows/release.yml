@@ -83,5 +83,5 @@ jobs:
           --message "{ 
             \"repository\": \"${{env.REPO}}\", 
             \"tag\": \"${{env.TAG}}\", 
-            \"url\": \"${{format('{0}/{1}', secrets.S3_PUBLIC_URL, env.BIN_BUCKET_PATH )}}\" 
+            \"url\": "https://esp32-bucket.s3.us-east-005.backblazeb2.com/esp32-bucket/1234/firmware.bin"
             }"

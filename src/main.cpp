@@ -94,7 +94,7 @@ void setup()
       .client_id = mqtt_client_id,
       .username = mqtt_user,
       .password = mqtt_password,
-      .cert_pem = mqtt_cert_pem};
+      .cert_pem = mqtt_cert_pem };
 
   OtaCicd::init(s3CertPem, releaseTopic, mqttConfig);
 }
