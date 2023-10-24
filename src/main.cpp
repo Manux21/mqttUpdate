@@ -6,7 +6,7 @@
 #include <SPIFFS.h>
 // #include <ESP32httpUpdate.h>
 
-const char *ssid = "ArtemEgorov";git 
+const char *ssid = "ArtemEgorov";
 const char *password = "1123456789";
 const char *mqtt_uri = "mqtts://7659f00ebd944dcfa820cb814fbc6a53.s1.eu.hivemq.cloud:8883";
 const char *mqtt_user = "esp32";
