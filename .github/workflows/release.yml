@@ -15,7 +15,7 @@ env:
   TAG: ${{github.ref_name}}
   REPO: ${{github.repository}}
   BIN_PATH: ${{ format('{0}/.pio/build/{1}/firmware.bin', github.workspace, vars.PIO_ENV ) }}
-  BIN_BUCKET_PATH: "esp32-bucket/1234/firmware.bin"
+  BIN_BUCKET_PATH: ${{ format('{0}/{1}.bin', github.repository, github.ref_name ) }}
 
 # Run only once, no concurrency
 concurrency:

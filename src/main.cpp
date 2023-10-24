@@ -4,7 +4,7 @@
 #include <HTTPClient.h>
 #include <FS.h>
 #include <SPIFFS.h>
-#include <ESP32httpUpdate.h>
+// #include <ESP32httpUpdate.h>
 
 const char *ssid = "ArtemEgorov";
 const char *password = "1123456789";
@@ -98,7 +98,8 @@ void setup()
       .client_id = mqtt_client_id,
       .username = mqtt_user,
       .password = mqtt_password,
-      .cert_pem = mqtt_cert_pem };
+      .cert_pem = mqtt_cert_pem 
+ };
 
   OtaCicd::init(s3CertPem, releaseTopic, mqttConfig);
 }
