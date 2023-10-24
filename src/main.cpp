@@ -1,8 +1,12 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include "OtaCicd.h"
+#include <HTTPClient.h>
+#include <FS.h>
+#include <SPIFFS.h>
+// #include <ESP32httpUpdate.h>
 
-const char *ssid = "ArtemEgorov";
+const char *ssid = "ArtemEgorov";git 
 const char *password = "1123456789";
 const char *mqtt_uri = "mqtts://7659f00ebd944dcfa820cb814fbc6a53.s1.eu.hivemq.cloud:8883";
 const char *mqtt_user = "esp32";
@@ -94,13 +98,14 @@ void setup()
       .client_id = mqtt_client_id,
       .username = mqtt_user,
       .password = mqtt_password,
-      .cert_pem = mqtt_cert_pem};
+      .cert_pem = mqtt_cert_pem 
+ };
 
   OtaCicd::init(s3CertPem, releaseTopic, mqttConfig);
 }
 
 void loop()
 {
-  Serial.print("h");
+  Serial.print("g");
   delay(500);
 }
