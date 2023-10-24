@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include "OtaCicd.h"
+#include <HTTPClient.h>
+#include <FS.h>
+#include <SPIFFS.h>
 
 const char *ssid = "ArtemEgorov";
 const char *password = "1123456789";
