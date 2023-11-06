@@ -106,6 +106,6 @@ void setup()
 
 void loop()
 {
-  Serial.println("Steve Jobs");
+  Serial.println("Hello");
   delay(500);
 }
