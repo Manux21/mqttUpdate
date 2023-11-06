@@ -81,8 +81,8 @@ jobs:
           --secure ${{ secrets.MQTT_SECURE }}
           --user ${{ secrets.MQTT_USER }}
           --password ${{ secrets.MQTT_PASSWORD }}
-          --message "{ 
-            \"repository\": \"${{env.REPO}}\", 
-            \"tag\": \"${{env.TAG}}\", 
-            \"url": "${{ format('{0}', env.S3_PUBLIC_URL) }}\" 
-            }"
+          --message "{
+            \"repository\": \"${{ env.REPO }}\",
+            \"tag\": \"${{ env.TAG }}\",
+            \"url\": \"${{ format('{0}', env.S3_PUBLIC_URL) }}\"
+          }"
