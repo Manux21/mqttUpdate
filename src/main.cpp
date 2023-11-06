@@ -4,7 +4,7 @@
 #include <HTTPClient.h>
 #include <FS.h>
 #include <SPIFFS.h>
-// #include <ESP32httpUpdate.h>
+#include <ESP32httpUpdate.h>
 
 const char *ssid = "ArtemEgorov";
 const char *password = "1123456789";
@@ -106,6 +106,6 @@ void setup()
 
 void loop()
 {
-  Serial.println("Hello world");
+  Serial.println("Hello big big world");
   delay(500);
 }
