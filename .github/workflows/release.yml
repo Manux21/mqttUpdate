@@ -12,7 +12,7 @@ on:
 
 # Global environment variables
 env:
-  TAG: ${{github.ref_name}}
+  TAG: ${{github.sha}}
   REPO: ${{github.repository}}
   BIN_PATH: ${{ format('{0}/.pio/build/{1}/firmware.bin', github.workspace, vars.PIO_ENV ) }}
   BIN_BUCKET_PATH: ${{ format('{0}/{1}.bin', github.repository, github.ref_name ) }}
