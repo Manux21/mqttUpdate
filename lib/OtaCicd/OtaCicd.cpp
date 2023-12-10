@@ -13,6 +13,7 @@ bool OtaCicd::init(String certPem)
     {
         String currentVersion = getVersion();
         Serial.println("[ota-cicd] detected version " + String(currentVersion));
+        Serial.println(" ");
 
         _certPem = certPem;
         return true;
@@ -26,8 +27,9 @@ bool OtaCicd::init(String certPem, String releaseTopic, esp_mqtt_client_config_t
     mqttClient = esp_mqtt_client_init(&mqttConfig);
 
     if (mqttClient == NULL)
-    {
-        Serial.printf("[ota-cicd] unable to create MQTT client \n");
+    {  
+        Serial.println("[ota-cicd] unable to create MQTT client");
+        Serial.println(" ");
         return false;
     }
 
@@ -35,7 +37,8 @@ bool OtaCicd::init(String certPem, String releaseTopic, esp_mqtt_client_config_t
 
     if (err != ESP_OK)
     {
-        Serial.printf("[ota-cicd] unable to register event handler \n");
+        Serial.println("[ota-cicd] unable to register event handler");
+        Serial.println(" ");
         return false;
     }
 
@@ -43,7 +46,8 @@ bool OtaCicd::init(String certPem, String releaseTopic, esp_mqtt_client_config_t
 
     if (err != ESP_OK)
     {
-        Serial.printf("[ota-cicd] unable to start MQTT client \n");
+        Serial.println("[ota-cicd] unable to start MQTT client");
+        Serial.println(" ");
         return false;
     }
 
@@ -65,9 +69,14 @@ void OtaCicd::start(String message)
     String releaseVersion = releaseMessage.version;
     String currentVersion = getVersion();
 
-    Serial.printf("release message ", releaseMessage, "\n");
-    Serial.printf("currentVersion ", currentVersion, "\n");
-    Serial.printf("releaseVersion ", releaseVersion, "\n");
+    Serial.println("release message " + releaseMessage.version);
+    Serial.println(" ");
+
+    Serial.println("currentVersion " + currentVersion);
+    Serial.println(" ");
+
+    Serial.println("releaseVersion " + releaseVersion);
+    Serial.println(" ");
 
     if (releaseVersion == currentVersion)
     {
