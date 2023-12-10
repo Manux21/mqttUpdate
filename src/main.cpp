@@ -111,34 +111,9 @@ void setup()
 
 void loop()
 {
-
-  while (message) {
-    DynamicJsonDocument jsonDoc(200);
-    jsonDoc["name"] = "ESP IDENTIFY";
-    JsonObject data = jsonDoc.createNestedObject("data");
-    data["id"] = ESP.getEfuseMac();
-    data["version"] = version;
-
-    String jsonString;
-    serializeJson(jsonDoc, jsonString);
-
-    HTTPClient http;
-    http.begin(apiEndpoint);
-    http.addHeader("Content-Type", "application/json");
-
-    int httpResponseCode = http.POST(jsonString);
-
-    String response = http.getString();
-    Serial.println("HTTP Responce code: " + String(httpResponseCode));
-    Serial.println("Server response: " + response);
-
-    http.end();
-    message = false;
-  }
-
   Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
   Serial.printf("Chip Model", ESP.getChipModel());
   Serial.println(" ");
-  Serial.println("Hello second v");
+  Serial.println("Hello third v");
   delay(5000);
 }
