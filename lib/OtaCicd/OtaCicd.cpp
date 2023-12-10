@@ -12,7 +12,7 @@ bool OtaCicd::init(String certPem)
     if (_preferences.begin("ota-cicd"))
     {
         String currentVersion = getVersion();
-        Serial.printf("[ota-cicd] detected version %s \n", currentVersion);
+        Serial.println("[ota-cicd] detected version " + String(currentVersion));
 
         _certPem = certPem;
         return true;
@@ -85,33 +85,6 @@ void OtaCicd::start(String message)
 
     bool otaRunning = true;
     bool updateSuccess = false;
-
-    // while (otaRunning)
-    // {
-        
-    //     t_httpUpdate_return ret = ESPhttpUpdate.update(releaseMessage.url.c_str());
-
-    //     switch (ret)
-    //     {
-    //         case HTTP_UPDATE_FAILED:
-    //             Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-    //             otaRunning = false;
-    //             break;
-
-    //         case HTTP_UPDATE_NO_UPDATES:
-    //             Serial.println("HTTP_UPDATE_NO_UPDATES");
-    //             otaRunning = false;
-    //             break;
-
-    //         case HTTP_UPDATE_OK:
-    //             Serial.println("HTTP_UPDATE_OK");
-    //             otaRunning = false;
-    //             updateSuccess = true;
-    //             break;
-    //     }
-
-    //     delay(1000);
-    // }
 
     while (otaRunning)
     {
