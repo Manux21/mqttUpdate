@@ -117,12 +117,10 @@ void loop()
 {
  if (!messageDisplayed) {
     Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
-    Serial.printf("Chip Model", ESP.getChipModel());
     Serial.println(" ");
-    Serial.println("Hello third 8");
+    Serial.println("Hello third 9");
     Serial.println("Current Version: " + currentVersion);
 
-    // Установите флаг в true, чтобы сообщение больше не выводилось
     messageDisplayed = true;
   }
 }

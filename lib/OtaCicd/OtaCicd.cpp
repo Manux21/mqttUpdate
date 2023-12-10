@@ -79,71 +79,71 @@ void OtaCicd::start(String message)
 
     Serial.printf("[otaCicd] new version found %s \n", releaseVersion);
 
-    // HttpsOTA.onHttpEvent([](HttpEvent_t *event) {});
+    HttpsOTA.onHttpEvent([](HttpEvent_t *event) {});
     Serial.printf("Downloading firmware from URL: %s\n", releaseMessage.url.c_str());
-    // HttpsOTA.begin(releaseMessage.url.c_str(), _certPem.c_str());
+    HttpsOTA.begin(releaseMessage.url.c_str(), _certPem.c_str());
 
     bool otaRunning = true;
     bool updateSuccess = false;
 
-    while (otaRunning)
-    {
-        
-        t_httpUpdate_return ret = ESPhttpUpdate.update(releaseMessage.url.c_str());
-
-        switch (ret)
-        {
-            case HTTP_UPDATE_FAILED:
-                Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-                otaRunning = false;
-                break;
-
-            case HTTP_UPDATE_NO_UPDATES:
-                Serial.println("HTTP_UPDATE_NO_UPDATES");
-                otaRunning = false;
-                break;
-
-            case HTTP_UPDATE_OK:
-                Serial.println("HTTP_UPDATE_OK");
-                otaRunning = false;
-                updateSuccess = true;
-                break;
-        }
-
-        delay(1000);
-    }
-
     // while (otaRunning)
     // {
-    //     switch (HttpsOTA.status())
+        
+    //     t_httpUpdate_return ret = ESPhttpUpdate.update(releaseMessage.url.c_str());
+
+    //     switch (ret)
     //     {
-    //     case HTTPS_OTA_IDLE:
-    //         Serial.printf("[otaCicd] update have not started yet \n");
-    //         break;
+    //         case HTTP_UPDATE_FAILED:
+    //             Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    //             otaRunning = false;
+    //             break;
 
-    //     case HTTPS_OTA_UPDATING:
-    //         Serial.printf("[otaCicd] update in progress \n");
-    //         break;
+    //         case HTTP_UPDATE_NO_UPDATES:
+    //             Serial.println("HTTP_UPDATE_NO_UPDATES");
+    //             otaRunning = false;
+    //             break;
 
-    //     case HTTPS_OTA_SUCCESS:
-    //         Serial.printf("[otaCicd] update is successful \n");
-    //         otaRunning = false;
-    //         updateSuccess = true;
-    //         break;
-
-    //     case HTTPS_OTA_FAIL:
-    //         Serial.printf("[otaCicd] update failed \n");
-    //         otaRunning = false;
-    //         break;
-
-    //     case HTTPS_OTA_ERR:
-    //         Serial.printf("[otaCicd] error occured while creating xEventGroup() \n");
-    //         otaRunning = false;
-    //         break;
+    //         case HTTP_UPDATE_OK:
+    //             Serial.println("HTTP_UPDATE_OK");
+    //             otaRunning = false;
+    //             updateSuccess = true;
+    //             break;
     //     }
 
     //     delay(1000);
     // }
+
+    while (otaRunning)
+    {
+        switch (HttpsOTA.status())
+        {
+        case HTTPS_OTA_IDLE:
+            Serial.printf("[otaCicd] update have not started yet \n");
+            break;
+
+        case HTTPS_OTA_UPDATING:
+            Serial.printf("[otaCicd] update in progress \n");
+            break;
+
+        case HTTPS_OTA_SUCCESS:
+            Serial.printf("[otaCicd] update is successful \n");
+            otaRunning = false;
+            updateSuccess = true;
+            break;
+
+        case HTTPS_OTA_FAIL:
+            Serial.printf("[otaCicd] update failed \n");
+            otaRunning = false;
+            break;
+
+        case HTTPS_OTA_ERR:
+            Serial.printf("[otaCicd] error occured while creating xEventGroup() \n");
+            otaRunning = false;
+            break;
+        }
+
+        delay(1000);
+    }
 
     if (updateSuccess)
     {
