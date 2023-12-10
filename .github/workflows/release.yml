@@ -83,6 +83,6 @@ jobs:
           --password ${{ secrets.MQTT_PASSWORD }}
           --message "{
             \"repository\": \"${{ env.REPO }}\",
-            \"tag\": \"${{ github.event.head_commit.id }}-${{ github.run_number }}\",
+            \"tag\": \"${{ github.run_number }}\",
             \"url\": \"${{ format('{0}', env.S3_PUBLIC_URL) }}\"
           }"

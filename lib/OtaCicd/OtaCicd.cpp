@@ -70,13 +70,10 @@ void OtaCicd::start(String message)
     String currentVersion = getVersion();
 
     Serial.println("release message " + releaseMessage.version);
-    Serial.println(" ");
 
     Serial.println("currentVersion " + currentVersion);
-    Serial.println(" ");
 
     Serial.println("releaseVersion " + releaseVersion);
-    Serial.println(" ");
 
     if (releaseVersion == currentVersion)
     {
@@ -85,8 +82,7 @@ void OtaCicd::start(String message)
     }
 
     
-
-    Serial.printf("[otaCicd] new version found %s \n", releaseVersion);
+    Serial.println("[otaCicd] new version found"  + releaseVersion);
 
     HttpsOTA.onHttpEvent([](HttpEvent_t *event) {});
     Serial.printf("Downloading firmware from URL: %s\n", releaseMessage.url.c_str());
