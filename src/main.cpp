@@ -16,6 +16,7 @@ const char *releaseTopic = "esp-version";
 const char *version = "0.2";
 
 boolean message = true;
+String currentVersion;
 
 const char *apiEndpoint = "https://api.restful-api.dev/objects";
 
@@ -90,6 +91,8 @@ void setup()
 
   WiFi.begin(ssid, password);
 
+  currentVersion = OtaCicd::getCurrentVersion();
+
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
@@ -114,7 +117,7 @@ void loop()
   Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
   Serial.printf("Chip Model", ESP.getChipModel());
   Serial.println(" ");
-  Serial.println("Hello third v");
-  Serial.println("Current Version: " + OtaCicd::getCurrentVersion());  // Получение текущей версии
+  Serial.println("Hello third 5");
+  Serial.println("Current Version: " + currentVersion);  // Получение текущей версии
   delay(5000);
 }
