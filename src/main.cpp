@@ -13,7 +13,7 @@ const char *mqtt_user = "esp32";
 const char *mqtt_password = "Password1234";
 const char *mqtt_client_id = "esp32";
 const char *releaseTopic = "esp-version";
-const char *version = "0.1";
+const char *version = "0.2";
 
 boolean message = true;
 
