@@ -87,7 +87,7 @@ const String s3CertPem = "-----BEGIN CERTIFICATE-----\n"
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println();
 
   WiFi.begin(ssid, password);
@@ -117,7 +117,7 @@ void loop()
 {
  if (!messageDisplayed) {
     Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
-    Serial.println("Hello third 10");
+    Serial.println("Hello third 16");
     Serial.println("Current Version: " + currentVersion);
 
     messageDisplayed = true;
