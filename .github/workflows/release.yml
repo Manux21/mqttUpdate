@@ -12,6 +12,7 @@ on:
 
 # Global environment variables
 env:
+  TAG: ${{github.sha}}
   REPO: ${{github.repository}}
   BIN_PATH: ${{ format('{0}/.pio/build/{1}/firmware.bin', github.workspace, vars.PIO_ENV ) }}
   BIN_BUCKET_PATH: ${{ format('{0}/{1}.bin', github.repository, github.ref_name ) }}
@@ -70,7 +71,7 @@ jobs:
       - name: Publish MQTT message
         run: >-
           docker run hivemq/mqtt-cli pub
-          --topic ${{ secrets.MQTT_PUB_TOPIC }}
+          --topic ${{ vars.MQTT_PUB_TOPIC }}
           --retain
           --qos 2
           --contentType application/json
