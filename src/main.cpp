@@ -117,8 +117,7 @@ void loop()
 {
  if (!messageDisplayed) {
     Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
-    Serial.println(" ");
-    Serial.println("Hello third 9");
+    Serial.println("Hello third 10");
     Serial.println("Current Version: " + currentVersion);
 
     messageDisplayed = true;
