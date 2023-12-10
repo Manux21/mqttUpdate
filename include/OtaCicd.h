@@ -24,7 +24,7 @@ public:
     static void start(String message);
     static String getVersion();
     static esp_mqtt_client_handle_t mqttClient;
-    String getCurrentVersion();
+    static String getCurrentVersion();
 
 private:
     static String _certPem;
