@@ -13,6 +13,11 @@ const char *mqtt_user = "esp32";
 const char *mqtt_password = "Password1234";
 const char *mqtt_client_id = "esp32";
 const char *releaseTopic = "esp-version";
+const char *version = "0.1";
+
+boolean message = true;
+
+const char *apiEndpoint = "https://api.restful-api.dev/objects";
 
 const char *mqtt_cert_pem = "-----BEGIN CERTIFICATE-----\n"
                             "MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw\n"
@@ -106,6 +111,34 @@ void setup()
 
 void loop()
 {
-  Serial.println("Hello");
-  delay(500);
+
+  while (message) {
+    DynamicJsonDocument jsonDoc(200);
+    jsonDoc["name"] = "ESP IDENTIFY";
+    JsonObject data = jsonDoc.createNestedObject("data");
+    data["id"] = ESP.getEfuseMac();
+    data["version"] = version;
+
+    String jsonString;
+    serializeJson(jsonDoc, jsonString);
+
+    HTTPClient http;
+    http.begin(apiEndpoint);
+    http.addHeader("Content-Type", "application/json");
+
+    int httpResponseCode = http.POST(jsonString);
+
+    String response = http.getString();
+    Serial.println("HTTP Responce code: " + String(httpResponseCode));
+    Serial.println("Server response: " + response);
+
+    http.end();
+    message = false;
+  }
+
+  Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
+  Serial.printf("Chip Model", ESP.getChipModel());
+  Serial.println(" ");
+  Serial.println("Hello second v");
+  delay(5000);
 }
