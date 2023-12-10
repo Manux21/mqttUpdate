@@ -117,7 +117,7 @@ void loop()
   Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
   Serial.printf("Chip Model", ESP.getChipModel());
   Serial.println(" ");
-  Serial.println("Hello third 5");
+  Serial.println("Hello third 7");
   Serial.println("Current Version: " + currentVersion);  // Получение текущей версии
   delay(5000);
 }
