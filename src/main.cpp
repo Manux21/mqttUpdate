@@ -115,5 +115,6 @@ void loop()
   Serial.printf("Chip Model", ESP.getChipModel());
   Serial.println(" ");
   Serial.println("Hello third v");
+  Serial.println("Current Version: " + OtaCicd::getCurrentVersion());  // Получение текущей версии
   delay(5000);
 }
