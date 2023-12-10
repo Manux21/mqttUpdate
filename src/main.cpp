@@ -17,6 +17,7 @@ const char *version = "0.2";
 
 boolean message = true;
 String currentVersion;
+bool messageDisplayed = false;
 
 const char *apiEndpoint = "https://api.restful-api.dev/objects";
 
@@ -114,10 +115,14 @@ void setup()
 
 void loop()
 {
-  Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
-  Serial.printf("Chip Model", ESP.getChipModel());
-  Serial.println(" ");
-  Serial.println("Hello third 7");
-  Serial.println("Current Version: " + currentVersion);  // Получение текущей версии
-  delay(5000);
+ if (!messageDisplayed) {
+    Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
+    Serial.printf("Chip Model", ESP.getChipModel());
+    Serial.println(" ");
+    Serial.println("Hello third 8");
+    Serial.println("Current Version: " + currentVersion);
+
+    // Установите флаг в true, чтобы сообщение больше не выводилось
+    messageDisplayed = true;
+  }
 }
