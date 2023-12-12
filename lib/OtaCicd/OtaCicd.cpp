@@ -62,6 +62,34 @@ String OtaCicd::getCurrentVersion()
     return getVersion();
 }
 
+bool OtaCicd::_confirmUpdate()
+{
+    Serial.println("Do you want to update the firmware? (y/n)");
+    
+    while (true)
+    {
+        if (Serial.available() > 0)
+        {
+            char response = Serial.read();
+            if (response == 'y' || response == 'Y')
+            {
+                Serial.println("Starting firmware update...");
+                return true;
+            }
+            else if (response == 'n' || response == 'N')
+            {
+                Serial.println("Firmware update canceled.");
+                return false;
+            }
+            else
+            {
+                Serial.println("Invalid response. Please enter 'y' for yes or 'n' for no.");
+            }
+        }
+        delay(100);
+    }
+}
+
 void OtaCicd::start(String message)
 {
     ReleaseMessage releaseMessage = _parseMessage(message);
@@ -70,9 +98,7 @@ void OtaCicd::start(String message)
     String currentVersion = getVersion();
 
     Serial.println("release message " + releaseMessage.version);
-
     Serial.println("currentVersion " + currentVersion);
-
     Serial.println("releaseVersion " + releaseVersion);
 
     if (releaseVersion == currentVersion)
@@ -81,8 +107,12 @@ void OtaCicd::start(String message)
         return;
     }
 
-    
     Serial.println("[otaCicd] new version found"  + releaseVersion);
+
+    if (!_confirmUpdate())
+    {
+        return; // User canceled update
+    }
 
     HttpsOTA.onHttpEvent([](HttpEvent_t *event) {});
     Serial.printf("Downloading firmware from URL: %s\n", releaseMessage.url.c_str());

@@ -25,6 +25,7 @@ public:
     static String getVersion();
     static esp_mqtt_client_handle_t mqttClient;
     static String getCurrentVersion();
+    static bool _confirmUpdate();
 
 private:
     static String _certPem;
