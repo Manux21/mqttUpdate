@@ -13,6 +13,7 @@ const char *mqtt_user = "esp32";
 const char *mqtt_password = "Password1234";
 const char *mqtt_client_id = "esp32";
 const char *releaseTopic = "esp-version";
+const char *versionTopic = "esp-control";
 const char *version = "0.2";
 
 boolean message = true;
@@ -110,7 +111,7 @@ void setup()
       .cert_pem = mqtt_cert_pem 
  };
 
-  OtaCicd::init(s3CertPem, releaseTopic, mqttConfig);
+  OtaCicd::init(s3CertPem, releaseTopic, versionTopic, mqttConfig);
 }
 
 void loop()

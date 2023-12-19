@@ -4,6 +4,7 @@
 
 String OtaCicd::_certPem;
 String OtaCicd::_releaseTopic;
+String OtaCicd::_versionTopic;
 Preferences OtaCicd::_preferences;
 esp_mqtt_client_handle_t OtaCicd::mqttClient;
 
@@ -22,7 +23,7 @@ bool OtaCicd::init(String certPem)
     return false;
 }
 
-bool OtaCicd::init(String certPem, String releaseTopic, esp_mqtt_client_config_t mqttConfig)
+bool OtaCicd::init(String certPem, String releaseTopic, String versionTopic, esp_mqtt_client_config_t mqttConfig)
 {
     mqttClient = esp_mqtt_client_init(&mqttConfig);
 
@@ -52,6 +53,7 @@ bool OtaCicd::init(String certPem, String releaseTopic, esp_mqtt_client_config_t
     }
 
     _releaseTopic = releaseTopic;
+    _versionTopic = versionTopic;
 
     return init(certPem);
 }
@@ -107,11 +109,11 @@ void OtaCicd::start(String message)
         return;
     }
 
-    Serial.println("[otaCicd] new version found"  + releaseVersion);
+    Serial.println("[otaCicd] new version found "  + releaseVersion);
 
     if (!_confirmUpdate())
     {
-        return; // User canceled update
+        return;
     }
 
     HttpsOTA.onHttpEvent([](HttpEvent_t *event) {});
@@ -193,16 +195,21 @@ ReleaseMessage OtaCicd::_parseMessage(String message)
     return releaseMessage;
 }
 
+
 void OtaCicd::_onMqttData(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
     esp_mqtt_event_handle_t event = *((esp_mqtt_event_handle_t *)(&event_data));
     esp_mqtt_client_handle_t client = event->client;
+    String macAddress = String(ESP.getEfuseMac(), HEX);
+    String controlMessage = "Version: " + getCurrentVersion() + ", MAC: " + macAddress;
+      
 
     switch (event_id)
     {
     case MQTT_EVENT_CONNECTED:
         Serial.printf("[ota-cicd] mqtt client connected \n");
         esp_mqtt_client_subscribe(client, _releaseTopic.c_str(), 2);
+        esp_mqtt_client_publish(client, _versionTopic.c_str(), controlMessage.c_str(), 0, 0, 0);
         break;
 
     case MQTT_EVENT_DISCONNECTED:

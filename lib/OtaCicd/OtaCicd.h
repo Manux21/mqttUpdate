@@ -20,16 +20,18 @@ class OtaCicd
 {
 public:
     static bool init(String certPem);
-    static bool init(String certPem, String releaseTopic, esp_mqtt_client_config_t mqttConfig);
+    static bool init(String certPem, String releaseTopic, String versionTopic, esp_mqtt_client_config_t mqttConfig);
     static void start(String message);
     static String getVersion();
     static esp_mqtt_client_handle_t mqttClient;
     static String getCurrentVersion();
     static bool _confirmUpdate();
+    static void sendVersionAndMac();
 
 private:
     static String _certPem;
     static String _releaseTopic;
+    static String _versionTopic;
     static Preferences _preferences;
     static bool _setVersion(String version);
     static ReleaseMessage _parseMessage(String message);
