@@ -27,11 +27,11 @@ public:
     static String getCurrentVersion();
     static bool _confirmUpdate();
     static void sendVersionAndMac();
+    static String _versionTopic;
 
 private:
     static String _certPem;
     static String _releaseTopic;
-    static String _versionTopic;
     static Preferences _preferences;
     static bool _setVersion(String version);
     static ReleaseMessage _parseMessage(String message);
