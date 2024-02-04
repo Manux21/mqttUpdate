@@ -116,7 +116,7 @@ void loop()
 {
 
     Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
-    Serial.println("Hello third 38");
+    Serial.println("Hello third 63");
 
     String macAddress = String(ESP.getEfuseMac(), HEX);
     String controlMessage = "Version: " + currentVersion + ", MAC: " + macAddress;
