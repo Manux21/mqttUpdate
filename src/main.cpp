@@ -114,20 +114,17 @@
 
 void loop()
 {
-
     Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
-    Serial.println("Hello third 67");
+    Serial.println("Hello third 57");
 
+    // Получение MAC-адреса и преобразование его в строку
     String macAddress = String(ESP.getEfuseMac(), HEX);
-    String controlMessage = "Version: " + currentVersion + ", MAC: " + macAddress;
 
-    // Отправка данных по MQTT
-    esp_mqtt_client_publish(OtaCicd::mqttClient, OtaCicd::_versionTopic.c_str(), controlMessage.c_str(), 0, 0, 0);
+    // Отправка MAC-адреса по MQTT
+    esp_mqtt_client_publish(OtaCicd::mqttClient, OtaCicd::_versionTopic.c_str(), macAddress.c_str(), 0, 0, 0);
 
     // Задержка в 10 секунд
     delay(10000);
-
-    
 }
 
 
