@@ -115,7 +115,7 @@
 void loop()
 {
     Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
-    Serial.println("Hello third 57");
+    Serial.println("Hello third 58");
 
     // Получение MAC-адреса и преобразование его в строку
     String macAddress = String(ESP.getEfuseMac(), HEX);
