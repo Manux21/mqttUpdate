@@ -7,7 +7,7 @@
   #include <ESP32httpUpdate.h>
 
   const char *ssid = "ArtemEgorov";
-  const char *password = "1123456789";
+  const char *password = "11234567899";
   const char *mqtt_uri = "mqtts://7659f00ebd944dcfa820cb814fbc6a53.s1.eu.hivemq.cloud:8883";
   const char *mqtt_user = "esp32";
   const char *mqtt_password = "Password1234";
@@ -115,7 +115,7 @@
 void loop()
 {
     Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
-    Serial.println("Hello third 59");
+    Serial.println("Hello 70");
 
     // Получение MAC-адреса и преобразование его в строку
     String macAddress = String(ESP.getEfuseMac(), HEX);
