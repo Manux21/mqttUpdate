@@ -1,83 +1,83 @@
-name: CI/CD for ESP32
+name: OTA
 
-on:
+# Triggered when new release published
+on: 
   push:
     branches:
       - main
+  workflow_dispatch:
+
+# Global environment variables
+env:
+  TAG: ${{github.sha}}
+  REPO: ${{github.repository}}
+  BIN_PATH: ${{ format('{0}/.pio/build/{1}/firmware.bin', github.workspace, vars.PIO_ENV ) }}
+  BIN_BUCKET_PATH: ${{ format('{0}/{1}.bin', github.repository, github.ref_name ) }}
+  S3_PUBLIC_URL: "https://f005.backblazeb2.com/file/esp32-bucket/esp32-firmware/firmware.bin"
+
+# Run only once, no concurrency
+concurrency:
+  group: production
+  cancel-in-progress: true
 
 jobs:
-  build:
+  build_upload:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
+      - name: Build PlatformIO Project
+        run: pio run --environment ${{vars.PIO_ENV}}
 
-    - name: Install ESP-IDF
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y git
-        git clone -b v4.2 --recursive https://github.com/espressif/esp-idf.git esp-idf-v4.2
-        ./esp-idf-v4.2/install.sh
-        echo "source $(pwd)/esp-idf-v4.2/export.sh" >> $GITHUB_ENV
+      - name: Create aws-cli container
+        run: docker run --entrypoint /bin/sh -itd --name aws-cli amazon/aws-cli
 
-    - name: Cache ESP-IDF dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.espressif
-          ~/esp
-        key: ${{ runner.os }}-esp-idf-${{ hashFiles('**/idf_requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-esp-idf-
+      - name: Configure access key
+        run: docker exec aws-cli aws configure set aws_access_key_id ${{secrets.S3_ACCESS_KEY_ID}}
 
-    - name: Install ESP32 dependencies
-      run: |
-        sudo apt-get install -y gcc make flex bison gperf python3 python3-pip python3-setuptools python3-serial python3-click python3-pyparsing python3-cryptography python3-future python3-pyelftools cmake ninja-build ccache libffi-dev libssl-dev dfu-util
-        pip3 install esptool
+      - name: Configure secret key
+        run: docker exec aws-cli aws configure set aws_secret_access_key ${{secrets.S3_SECRET_ACCESS_KEY}}
 
-    - name: Build firmware
-      run: |
-        source $GITHUB_ENV
-        idf.py build
+      - name: Copy firmware.bin to aws-cli container
+        run: docker cp ${{env.BIN_PATH}} aws-cli:/firmware.bin
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: firmware
-        path: build/
+      - name: Upload firmware.bin to S3 bucket
+        run: >-
+          docker exec aws-cli aws s3 cp /firmware.bin s3://esp32-firmware/
+          --output json
+          --endpoint-url https://esp32-bucket.s3.us-east-005.backblazeb2.com
+          --region us-east-005
 
   publish:
-    needs: build
+    needs: build_upload
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v2
-      with:
-        name: firmware
-        path: build/
-
-    - name: Sync built firmware to S3
-      run: |
-        aws s3 sync build/ s3://${{ secrets.S3_BUCKET }}/firmware/
-
-    - name: Notify MQTT broker
-      run: |
-        pip3 install paho-mqtt
-        python3 notify_mqtt.py
+      - name: Publish MQTT message
+        run: >-
+          docker run hivemq/mqtt-cli pub
+          --topic ${{ vars.MQTT_PUB_TOPIC }}
+          --retain
+          --qos 2
+          --contentType application/json
+          --host ${{ secrets.MQTT_HOST }}
+          --port ${{ secrets.MQTT_PORT }}
+          --mqttVersion ${{ secrets.MQTT_VERSION }}
+          --secure ${{ secrets.MQTT_SECURE }}
+          --user ${{ secrets.MQTT_USER }}
+          --password ${{ secrets.MQTT_PASSWORD }}
+          --message "{
+            \"repository\": \"${{ env.REPO }}\",
+            \"tag\": \"${{ github.run_number }}\",
+            \"url\": \"${{ env.S3_PUBLIC_URL }}\"
+          }"
