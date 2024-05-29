@@ -21,11 +21,10 @@ jobs:
     - name: Install ESP-IDF
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget
-        wget https://dl.espressif.com/dl/esp-idf/releases/esp-idf-v4.2.zip
-        unzip esp-idf-v4.2.zip
-        ./esp-idf/install.sh
-        echo "source $(pwd)/esp-idf/export.sh" >> $GITHUB_ENV
+        sudo apt-get install -y git
+        git clone -b v4.2 --recursive https://github.com/espressif/esp-idf.git esp-idf-v4.2
+        ./esp-idf-v4.2/install.sh
+        echo "source $(pwd)/esp-idf-v4.2/export.sh" >> $GITHUB_ENV
 
     - name: Cache ESP-IDF dependencies
       uses: actions/cache@v2
