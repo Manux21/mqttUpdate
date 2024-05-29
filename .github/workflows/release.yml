@@ -47,6 +47,20 @@ jobs:
         source $GITHUB_ENV
         idf.py build
 
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: build/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -54,12 +68,15 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Sync built firmware to S3
-      uses: aws-actions/s3-sync-action@v3
+    - name: Download build artifacts
+      uses: actions/download-artifact@v2
       with:
-        source-dir: build/
-        destination-bucket: ${{ secrets.S3_BUCKET }}
-        destination-prefix: firmware/
+        name: firmware
+        path: build/
+
+    - name: Sync built firmware to S3
+      run: |
+        aws s3 sync build/ s3://${{ secrets.S3_BUCKET }}/firmware/
 
     - name: Notify MQTT broker
       run: |

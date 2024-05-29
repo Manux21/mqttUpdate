@@ -11,7 +11,7 @@ client.connect(broker_address, port=port)
 
 message = {
     "firmware_url": f"https://{os.getenv('S3_BUCKET')}.s3.amazonaws.com/firmware/firmware.bin",
-    "version": os.getenv("FIRMWARE_VERSION", "1.0.0")
+    "version": os.getenv("FIRMWARE_VERSION", "1.0.0")  # Убедитесь, что обновляете версию при каждом изменении
 }
 
 client.publish(topic, str(message))
