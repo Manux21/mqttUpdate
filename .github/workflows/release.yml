@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 env:
-  TAG: ${{github.sha}}
-  REPO: ${{github.repository}}
+  TAG: ${{ github.sha }}
+  REPO: ${{ github.repository }}
   BIN_PATH: ${{ format('{0}/.pio/build/{1}/firmware.bin', github.workspace, vars.PIO_ENV ) }}
   BIN_BUCKET_PATH: ${{ format('{0}/{1}.bin', github.repository, github.ref_name ) }}
   S3_PUBLIC_URL: "https://f005.backblazeb2.com/file/esp32-bucket/esp32-firmware/firmware.bin"
@@ -24,34 +24,40 @@ jobs:
   build_upload:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Cache dependencies
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/pip
             ~/.platformio/.cache
           key: ${{ runner.os }}-pio
-      - uses: actions/setup-python@v4
+        
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: "3.9"
+        
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
-
+        
       - name: Build PlatformIO Project
-        run: pio run --environment ${{vars.PIO_ENV}}
-
+        run: pio run --environment ${{ vars.PIO_ENV }}
+        
       - name: Create aws-cli container
         run: docker run --entrypoint /bin/sh -itd --name aws-cli amazon/aws-cli
-
+        
       - name: Configure access key
-        run: docker exec aws-cli aws configure set aws_access_key_id ${{secrets.S3_ACCESS_KEY_ID}}
-
+        run: docker exec aws-cli aws configure set aws_access_key_id ${{ secrets.S3_ACCESS_KEY_ID }}
+        
       - name: Configure secret key
-        run: docker exec aws-cli aws configure set aws_secret_access_key ${{secrets.S3_SECRET_ACCESS_KEY}}
-
+        run: docker exec aws-cli aws configure set aws_secret_access_key ${{ secrets.S3_SECRET_ACCESS_KEY }}
+        
       - name: Copy firmware.bin to aws-cli container
-        run: docker cp ${{env.BIN_PATH}} aws-cli:/firmware.bin
-
+        run: docker cp ${{ env.BIN_PATH }} aws-cli:/firmware.bin
+        
       - name: Upload firmware.bin to S3 bucket
         run: >-
           docker exec aws-cli aws s3 cp /firmware.bin s3://esp32-firmware/
@@ -64,18 +70,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Publish MQTT message for devices
-        run: >-
-          docker run hivemq/mqtt-cli pub
-          --topic ${{ vars.MQTT_PUB_TOPIC }}
-          --retain
-          --qos 2
-          --contentType application/json
-          --host ${{ secrets.MQTT_HOST }}
-          --port ${{ secrets.MQTT_PORT }}
-          --mqttVersion ${{ secrets.MQTT_VERSION }}
-          --secure ${{ secrets.MQTT_SECURE }}
-          --user ${{ secrets.MQTT_USER }}
-          --password ${{ secrets.MQTT_PASSWORD }}
+        run: |
+          docker run hivemq/mqtt-cli pub \
+          --topic ${{ vars.MQTT_PUB_TOPIC }} \
+          --retain \
+          --qos 2 \
+          --contentType application/json \
+          --host ${{ secrets.MQTT_HOST }} \
+          --port ${{ secrets.MQTT_PORT }} \
+          --mqttVersion ${{ secrets.MQTT_VERSION }} \
+          --secure \
+          --user ${{ secrets.MQTT_USER }} \
+          --password ${{ secrets.MQTT_PASSWORD }} \
           --message "{
             \"repository\": \"${{ env.REPO }}\",
             \"version\": \"${{ github.run_number }}\",
@@ -83,10 +89,12 @@ jobs:
             \"applyToAllDevices\": true,
             \"groups\": []
           }"
+        
       - name: Notify backend of new firmware version
-        run: curl -X POST ${{ secrets.BACKEND_URL }}/api/firmware -H "Content-Type: application/json" -d '{
-            "version": "${{ github.run_number }}",
-            "url": "${{ env.S3_PUBLIC_URL }}",
-            "applyToAllDevices": true,
-            "groups": []
-          }'
+        run: |
+          curl -X POST ${{ secrets.BACKEND_URL }}/api/firmware -H "Content-Type: application/json" -d "{
+          "version": "${{ github.run_number }}",
+          "url": "${{ env.S3_PUBLIC_URL }}",
+          "applyToAllDevices": true,
+          "groups": []
+          }
