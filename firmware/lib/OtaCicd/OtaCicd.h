@@ -9,11 +9,14 @@
 #include <esp_http_client.h>
 #include <mqtt_client.h>
 
-struct ReleaseMessage
-{
-    String repository;
-    String version;
-    String url;
+#ifndef APP_VERSION
+# define APP_VERSION "dev"
+#endif
+
+struct ReleaseMessage {
+  String repository;
+  String url;
+  String version;
 };
 
 class OtaCicd

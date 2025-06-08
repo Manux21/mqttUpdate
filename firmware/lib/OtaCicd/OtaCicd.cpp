@@ -1,7 +1,6 @@
 #include "OtaCicd.h"
 #include <ESP32httpUpdate.h>
 
-
 String OtaCicd::_certPem;
 String OtaCicd::_releaseTopic;
 String OtaCicd::_versionTopic;
@@ -10,10 +9,14 @@ esp_mqtt_client_handle_t OtaCicd::mqttClient;
 
 bool OtaCicd::init(String certPem)
 {
-    if (_preferences.begin("ota-cicd"))
+    if (_preferences.begin("ota-cicd", false))
     {
-        String currentVersion = getVersion();
-        Serial.println("[ota-cicd] detected version " + String(currentVersion));
+        String stored = getVersion();
+        if (stored == "unknown") {
+            _setVersion(String(APP_VERSION));
+            stored = APP_VERSION;
+        }
+        Serial.println("[ota-cicd] detected version " + stored);
         Serial.println(" ");
 
         _certPem = certPem;
@@ -188,9 +191,9 @@ ReleaseMessage OtaCicd::_parseMessage(String message)
 
     ReleaseMessage releaseMessage;
 
-    releaseMessage.repository = doc["repository"].as<String>();
-    releaseMessage.url = doc["url"].as<String>();
-    releaseMessage.version = doc["tag"].as<String>();
++    releaseMessage.repository = doc["repository"].as<String>();
++    releaseMessage.url = doc["url"].as<String>();
++    releaseMessage.version = doc["version"].as<String>();
 
     return releaseMessage;
 }
@@ -201,15 +204,16 @@ void OtaCicd::_onMqttData(void *handler_args, esp_event_base_t base, int32_t eve
     esp_mqtt_event_handle_t event = *((esp_mqtt_event_handle_t *)(&event_data));
     esp_mqtt_client_handle_t client = event->client;
     String macAddress = String(ESP.getEfuseMac(), HEX);
-    String controlMessage = "Version: " + getCurrentVersion() + ", MAC: " + macAddress;
+    String ver = getCurrentVersion();
+    if (ver == "unknown") ver = APP_VERSION;
+    String controlMessage = "Version: " + ver + ", MAC: " + macAddress;
       
-
     switch (event_id)
     {
     case MQTT_EVENT_CONNECTED:
         Serial.printf("[ota-cicd] mqtt client connected \n");
         esp_mqtt_client_subscribe(client, _releaseTopic.c_str(), 2);
-        esp_mqtt_client_publish(client, _versionTopic.c_str(), controlMessage.c_str(), 0, 0, 0);
+        esp_mqtt_client_publish(client, _versionTopic.c_str(), controlMessage.c_str(), 0, 0, 1 /*retain*/);
         break;
 
     case MQTT_EVENT_DISCONNECTED:
