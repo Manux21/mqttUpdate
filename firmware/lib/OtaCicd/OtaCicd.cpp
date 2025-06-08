@@ -191,9 +191,9 @@ ReleaseMessage OtaCicd::_parseMessage(String message)
 
     ReleaseMessage releaseMessage;
 
-+    releaseMessage.repository = doc["repository"].as<String>();
-+    releaseMessage.url = doc["url"].as<String>();
-+    releaseMessage.version = doc["version"].as<String>();
+    releaseMessage.repository = doc["repository"].as<String>();
+    releaseMessage.url = doc["url"].as<String>();
+    releaseMessage.version = doc["version"].as<String>();
 
     return releaseMessage;
 }
