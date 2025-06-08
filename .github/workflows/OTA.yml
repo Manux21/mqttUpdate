@@ -12,6 +12,8 @@ concurrency:
 
 env:
   REPO: ${{ github.repository }}
+  PIO_ENV: esp32doit-devkit-v1
+  PIO_PROJECT_DIR: firmware
   BIN_PATH: ${{ format('{0}/.pio/build/{1}/firmware.bin', github.workspace, vars.PIO_ENV ) }}
   S3_PUBLIC_URL: "https://f005.backblazeb2.com/file/esp32-bucket/esp32-firmware/firmware.bin"
 
@@ -41,7 +43,8 @@ jobs:
 
       - name: Build PlatformIO Project
         run: |
-          pio run --environment ${{ vars.PIO_ENV }} --project-option="build_flags=-DAPP_VERSION=\\\"${{ steps.get_version.outputs.VERSION }}\\\""
+          cd ${{ env.PIO_PROJECT_DIR }}
+          pio run --environment ${{ env.PIO_ENV }} --project-dir .
 
       - name: Create aws-cli container
         run: docker run --entrypoint /bin/sh -itd --name aws-cli amazon/aws-cli
@@ -53,7 +56,7 @@ jobs:
         run: docker exec aws-cli aws configure set aws_secret_access_key ${{ secrets.S3_SECRET_ACCESS_KEY }}
 
       - name: Copy firmware.bin to aws-cli container
-        run: docker cp ${{ env.BIN_PATH }} aws-cli:/firmware.bin
+        run: docker cp firmware/.pio/build/${{ env.PIO_ENV }}/firmware.bin aws-cli:/firmware.bin
 
       - name: Upload firmware.bin to S3 bucket
         run: >-
