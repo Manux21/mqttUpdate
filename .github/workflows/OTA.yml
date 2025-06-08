@@ -47,7 +47,7 @@ jobs:
           pio run --environment ${{ env.PIO_ENV }} --project-dir .
 
       - name: Create aws-cli container
-        run: docker run --entrypoint /bin/sh -itd --name aws-cli amazon/aws-cli
+        run: docker run --entrypoint /bin/sh -itd --name aws-cli amazon/aws-cli:2.11.10
 
       - name: Configure access key
         run: docker exec aws-cli aws configure set aws_access_key_id ${{ secrets.S3_ACCESS_KEY_ID }}
