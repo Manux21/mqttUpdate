@@ -5,16 +5,21 @@
   #include <FS.h>
   #include <SPIFFS.h>
   #include <ESP32httpUpdate.h>
+  
+  #ifndef APP_VERSION
+  #define APP_VERSION "dev"
+  #endif
 
-  const char *ssid = "ArtemEgorov";
-  const char *password = "11234567899";
+  const char *ssid = "Artekilla 2.4";
+  const char *password = "iron2001";
   const char *mqtt_uri = "mqtts://7659f00ebd944dcfa820cb814fbc6a53.s1.eu.hivemq.cloud:8883";
   const char *mqtt_user = "esp32";
   const char *mqtt_password = "Password1234";
   const char *mqtt_client_id = "esp32";
   const char *releaseTopic = "esp-version";
   const char *versionTopic = "esp-control";
-  const char *version = "0.2";
+  
+  const char *version = APP_VERSION;
 
   boolean message = true;
   String currentVersion;
